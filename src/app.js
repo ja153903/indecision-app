@@ -1,3 +1,6 @@
+// Stateless functional components should be used when you can
+// most of the time you really don't really need to use a class
+
 class IndecisionApp extends React.Component {
 
     constructor(props) {
@@ -52,54 +55,45 @@ class IndecisionApp extends React.Component {
     }
 }
 
-class Header extends React.Component {
-
-    render() {
-        return (
-            <div>
-                <h1>{this.props.title}</h1>
-                <h2>{this.props.subtitle}</h2>
-            </div>
-        )
-    }
+const Header = (props) => {
+    return (
+        <div>
+            <h1>{props.title}</h1>
+            <h2>{props.subtitle}</h2>
+        </div>
+    )
 }
 
-class Action extends React.Component {
-    render() {
-        return (
-            <div>
-                <button 
-                    disabled={this.props.hasOptions}
-                    onClick={this.props.handlePick}>What should I do?</button>
-            </div>)
-    }
+const Action = (props) => {
+    return (
+        <div>
+            <button 
+                disabled={props.hasOptions}
+                onClick={props.handlePick}>What should I do?</button>
+        </div>)
 }
 
-// Options
-class Options extends React.Component {
-    render() {
-        return (
-            <div>
-                Here are your options
-                <ol>
-                    {
-                        this.props.options.map((option, index) => <Option key={index} options={option}/>)       
-                    }
-                </ol>
-                <button onClick={this.props.handleDeleteOptions}>Remove All</button>
-            </div>
-        )
-    }
+const Options = (props) => {
+    return (
+        <div>
+            Here are your options
+            <ol>
+                {
+                    props.options.map((option, index) => <Option key={index} options={option}/>)       
+                }
+            </ol>
+            <button onClick={props.handleDeleteOptions}>Remove All</button>
+        </div>
+    )
 }
 
 // Option
-class Option extends React.Component {
-    render() {
-        return (
-            <li>{this.props.options}</li>
-        )
-    }
-}
+
+const Option = (props) => {
+    return (
+        <li>{props.options}</li>
+    )
+} 
 
 // AddOption
 class AddOptions extends React.Component {
@@ -132,5 +126,13 @@ class AddOptions extends React.Component {
     }
 }
 
+// const User = (props) => {
+//     return (
+//         <div>
+//             <p>Name: {props.name}</p>
+//             <p>Age: </p>
+//         </div>
+//     );
+// };
 
 ReactDOM.render(<IndecisionApp />, document.getElementById("app"));
