@@ -8,17 +8,60 @@ class IndecisionApp extends React.Component {
         this.state = {
             title: 'Indecision',
             subtitle: 'Put your life in the hands of a computer',
-            options: []
+            options: props.options
         }
         this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
         this.handleAddOptions = this.handleAddOptions.bind(this);
         this.handleRandomOptions = this.handleRandomOptions.bind(this);
+        this.handleDeleteOption = this.handleDeleteOption.bind(this);
+    }
+
+    // This gets called internally when the component mounts to DOM
+    componentDidMount() {
+        try {
+            const json = localStorage.getItem('options');
+            const options = JSON.parse(json);
+
+            if (options)
+                this.setState(() => ({ options }));
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    // This gets called interally when you expect the component to get mounted to the DOM
+    componentWillMount() {
+        console.log('componentWillMount')
+    }
+
+    // This gets called when something in the component changes
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.options.length !== this.state.options.length) {
+            const json = JSON.stringify(this.state.options);
+            localStorage.setItem('options', json);
+        }
+    }
+
+    // This gets called when something does go away
+    // you will get this when you switch from page to page for example
+    componentWillUnmount() {
+        console.log('componentWillUnmount');
     }
 
     handleDeleteOptions() {
         this.setState(() => {
             return {
                 options: []
+            }
+        })
+    }
+
+    handleDeleteOption(optionToRemove) {
+        this.setState((prevState) => {
+            return {
+                options: prevState.options.filter((option) => {
+                    return optionToRemove !== option;
+                })
             }
         })
     }
@@ -48,11 +91,16 @@ class IndecisionApp extends React.Component {
                 <Options 
                     options={this.state.options}
                     handleDeleteOptions={this.handleDeleteOptions}
+                    handleDeleteOption={this.handleDeleteOption}
                 />
                 <AddOptions  onFormSubmit={this.handleAddOptions}/>
             </div>
         )
     }
+}
+
+IndecisionApp.defaultProps = {
+    options: []
 }
 
 const Header = (props) => {
@@ -63,6 +111,11 @@ const Header = (props) => {
         </div>
     )
 }
+
+// literally what it says it is: a default prop
+Header.defaultProps = {
+    title: 'some default'
+};
 
 const Action = (props) => {
     return (
@@ -79,7 +132,7 @@ const Options = (props) => {
             Here are your options
             <ol>
                 {
-                    props.options.map((option, index) => <Option key={index} options={option}/>)       
+                    props.options.map((option, index) => <Option key={index} optionText={option} handleDeleteOption={props.handleDeleteOption}/>)       
                 }
             </ol>
             <button onClick={props.handleDeleteOptions}>Remove All</button>
@@ -91,7 +144,12 @@ const Options = (props) => {
 
 const Option = (props) => {
     return (
-        <li>{props.options}</li>
+        <li>
+            {props.optionText}
+            <button onClick={(event) => {
+                props.handleDeleteOption(props.optionText);
+            }}>Remove</button>
+        </li>
     )
 } 
 

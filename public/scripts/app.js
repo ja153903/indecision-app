@@ -24,20 +24,77 @@ var IndecisionApp = function (_React$Component) {
         _this.state = {
             title: 'Indecision',
             subtitle: 'Put your life in the hands of a computer',
-            options: []
+            options: props.options
         };
         _this.handleDeleteOptions = _this.handleDeleteOptions.bind(_this);
         _this.handleAddOptions = _this.handleAddOptions.bind(_this);
         _this.handleRandomOptions = _this.handleRandomOptions.bind(_this);
+        _this.handleDeleteOption = _this.handleDeleteOption.bind(_this);
         return _this;
     }
 
+    // This gets called internally when the component mounts to DOM
+
+
     _createClass(IndecisionApp, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            try {
+                var json = localStorage.getItem('options');
+                var options = JSON.parse(json);
+
+                if (options) this.setState(function () {
+                    return { options: options };
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        // This gets called interally when you expect the component to get mounted to the DOM
+
+    }, {
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            console.log('componentWillMount');
+        }
+
+        // This gets called when something in the component changes
+
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (prevState.options.length !== this.state.options.length) {
+                var json = JSON.stringify(this.state.options);
+                localStorage.setItem('options', json);
+            }
+        }
+
+        // This gets called when something does go away
+        // you will get this when you switch from page to page for example
+
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            console.log('componentWillUnmount');
+        }
+    }, {
         key: 'handleDeleteOptions',
         value: function handleDeleteOptions() {
             this.setState(function () {
                 return {
                     options: []
+                };
+            });
+        }
+    }, {
+        key: 'handleDeleteOption',
+        value: function handleDeleteOption(optionToRemove) {
+            this.setState(function (prevState) {
+                return {
+                    options: prevState.options.filter(function (option) {
+                        return optionToRemove !== option;
+                    })
                 };
             });
         }
@@ -69,7 +126,8 @@ var IndecisionApp = function (_React$Component) {
                 }),
                 React.createElement(Options, {
                     options: this.state.options,
-                    handleDeleteOptions: this.handleDeleteOptions
+                    handleDeleteOptions: this.handleDeleteOptions,
+                    handleDeleteOption: this.handleDeleteOption
                 }),
                 React.createElement(AddOptions, { onFormSubmit: this.handleAddOptions })
             );
@@ -78,6 +136,10 @@ var IndecisionApp = function (_React$Component) {
 
     return IndecisionApp;
 }(React.Component);
+
+IndecisionApp.defaultProps = {
+    options: []
+};
 
 var Header = function Header(props) {
     return React.createElement(
@@ -94,6 +156,11 @@ var Header = function Header(props) {
             props.subtitle
         )
     );
+};
+
+// literally what it says it is: a default prop
+Header.defaultProps = {
+    title: 'some default'
 };
 
 var Action = function Action(props) {
@@ -119,7 +186,7 @@ var Options = function Options(props) {
             'ol',
             null,
             props.options.map(function (option, index) {
-                return React.createElement(Option, { key: index, options: option });
+                return React.createElement(Option, { key: index, optionText: option, handleDeleteOption: props.handleDeleteOption });
             })
         ),
         React.createElement(
@@ -136,7 +203,14 @@ var Option = function Option(props) {
     return React.createElement(
         'li',
         null,
-        props.options
+        props.optionText,
+        React.createElement(
+            'button',
+            { onClick: function onClick(event) {
+                    props.handleDeleteOption(props.optionText);
+                } },
+            'Remove'
+        )
     );
 };
 
