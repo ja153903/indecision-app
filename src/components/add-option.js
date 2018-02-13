@@ -24,10 +24,9 @@ class AddOption extends Component {
     render() {
         return (
             <div>
-                Add an option here
-                <form onSubmit={this.handleAddOptions}>
-                    <input type="text" name="option"></input>
-                    <button>Submit</button>
+                <form className="add-option" onSubmit={this.handleAddOptions}>
+                    <input className="add-option__input" type="text" name="option"></input>
+                    <button className="button">Submit</button>
                 </form>
             </div>
         )

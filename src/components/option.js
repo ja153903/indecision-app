@@ -2,12 +2,14 @@ import React from 'react';
 
 const Option = (props) => {
     return (
-        <li>
-            {props.optionText}
+        <div className="option">
+            <p className="option__text">{props.count}. {props.optionText}</p>
             <button onClick={(event) => {
                 props.handleDeleteOption(props.optionText);
-            }}>Remove</button>
-        </li>
+            }}
+            className="button button--link">
+            Remove</button>
+        </div>
     )
 }
 
